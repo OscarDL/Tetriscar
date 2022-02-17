@@ -48,7 +48,9 @@ export const getPiece = (type) => {
   };
 };
 
-export const getPieceHTML = (piece) => {
+export const drawPiece = (piece) => {
+  if (!piece) return null;
+
   return (
     <div className="piece">
       {getPiece(piece).map((line, i) => (
@@ -62,7 +64,32 @@ export const getPieceHTML = (piece) => {
   );
 };
 
-export const getRandomPiece = () => {
-  const pieces = ['L', 'J', 'I', 'T', 'O', 'S', 'Z'];
-  return pieces[~~(Math.random() * pieces.length)];
-};
+export const getRandomPiece = () => (
+  pieceTypes[~~(Math.random() * pieceTypes.length)]
+);
+
+
+export const createNewBoard = () => (
+  [
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false]
+  ]
+);

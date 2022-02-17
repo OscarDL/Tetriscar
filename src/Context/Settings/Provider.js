@@ -1,16 +1,7 @@
 import React, { createContext, useContext, useReducer } from 'react';
 
 
-const appState = {
-  game: {
-    play: false,
-    sidePiece: null,
-    nextPiece: null,
-    currentPiece: null,
-    currentPieceRotation: 0,
-    board: [null, null, null, null, null, null, null, null, null, null]
-  },
-
+const settingsState = {
   commands: {
     save: {
       name: 'Enter',
@@ -39,11 +30,11 @@ const appState = {
   }
 };
 
-const AppContext = createContext();
-export const AppProvider = ({ reducer, children }) => (
-  <AppContext.Provider value={useReducer(reducer, appState)}>
+const SettingsContext = createContext();
+export const SettingsProvider = ({ reducer, children }) => (
+  <SettingsContext.Provider value={useReducer(reducer, settingsState)}>
     {children}
-  </AppContext.Provider>
+  </SettingsContext.Provider>
 );
 
-export const useAppContext = () => useContext(AppContext);
+export const useSettingsContext = () => useContext(SettingsContext);
