@@ -53,7 +53,7 @@ export const drawPiece = (piece) => {
 
   return (
     <div className="piece">
-      {getPiece(piece).map((line, i) => (
+      {piece.map((line, i) => (
         <div key={i} className="line">
           {line && line.map((block, j) => (
             <div key={j} className="block" style={{backgroundColor: block ?? 'transparent'}}/>
@@ -65,31 +65,150 @@ export const drawPiece = (piece) => {
 };
 
 export const getRandomPiece = () => (
-  pieceTypes[~~(Math.random() * pieceTypes.length)]
+  getPiece(pieceTypes[~~(Math.random() * pieceTypes.length)])
+);
+
+export const getNewPiecePos = (piece) => (
+  [0, ~~((10 - piece[0].length) / 2)]
 );
 
 
 export const createNewBoard = () => (
   [
-    [false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false]
+    [null, null, null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null, null, null]
   ]
 );
+
+
+export const savePiece = (currentPiece, nextPiece, savedPiece, dispatch) => {
+  dispatch({ type: 'SET_SAVED_PIECE', savedPiece: currentPiece });
+
+  if (savedPiece) {
+    dispatch({ type: 'SET_CURRENT_PIECE', currentPiece: savedPiece });
+  } else {
+    dispatch({ type: 'SET_CURRENT_PIECE', currentPiece: nextPiece });
+    dispatch({ type: 'SET_NEXT_PIECE', nextPiece: getRandomPiece() });
+  }
+};
+
+export const placePiece = (board, currentPiece, nextPiece, position, dispatch) => {
+  const newPosition = getNewPiecePos(nextPiece);
+
+  dispatch({ type: 'SET_CURRENT_PIECE', currentPiece: nextPiece });
+  dispatch({ type: 'SET_NEXT_PIECE', nextPiece: getRandomPiece() });
+  dispatch({ type: 'SET_POSITION', position: newPosition });
+  
+  const newBoard = updateBoard(board, currentPiece, position);
+  dispatch({ type: 'SET_BOARD', board: newBoard });
+};
+
+export const rotatePiece = (piece, rotation, dispatch) => {
+  // Rotate piece
+};
+
+
+export const updatePosition = (type, board, currentPiece, nextPiece, position, dispatch) => {
+  switch (type) {
+    case 'left': {
+      const [h, w] = position;
+
+      const canMoveLeft = currentPiece.every((line, i) => {
+        const firstBlock = line.findIndex(block => block !== null);
+        console.log(board, board[i], board[i][w + firstBlock - 1], i, firstBlock);
+        return board[h][w + firstBlock - 1] === null;
+      });
+
+      if (canMoveLeft) {
+        const newPosition = [h, w - 1];
+        dispatch({ type: 'SET_POSITION', position: newPosition });
+        dispatch({ type: 'SET_BOARD', board: updateBoard(board, currentPiece, newPosition, position) });
+      }
+
+      break;
+    };
+
+    case 'right': {
+      const [h, w] = position;
+
+      const canMoveRight = currentPiece.every((line, i) => {
+        // ".slice()" duplicates the line array to avoid mutating it with ".reverse()"
+        const lastBlock = line.slice().reverse().findIndex(block => block !== null);
+        return board[h][w + currentPiece[i].length - lastBlock] === null;
+      });
+
+      if (canMoveRight) {
+        const newPosition = [h, w + 1];
+        dispatch({ type: 'SET_POSITION', position: newPosition });
+        dispatch({ type: 'SET_BOARD', board: updateBoard(board, currentPiece, newPosition, position) });
+      }
+
+      break;
+    };
+
+    case 'down': {
+      const [h, w] = position;
+      const hPos = h + currentPiece.length - 1;
+      const lastPieceLine = currentPiece[currentPiece.length - 1];
+
+      const sliceUnderPiece = board[hPos + 1]?.slice(w, w + lastPieceLine.length);
+      const canMoveDown = sliceUnderPiece?.every(block => block === null) ?? false;
+
+      if (canMoveDown) {
+        const newPosition = [h + 1, w];
+        dispatch({ type: 'SET_POSITION', position: newPosition });
+        dispatch({ type: 'SET_BOARD', board: updateBoard(board, currentPiece, newPosition, position) });
+      } else {
+        placePiece(board, currentPiece, nextPiece, position, dispatch);
+      }
+
+      break;
+    };
+
+    default:
+      break;
+  }
+};
+
+
+export const updateBoard = (board, piece, newPos, oldPos) => {
+  const newBoard = JSON.parse(JSON.stringify(board));
+
+  if (oldPos) {
+    // Clean old position on the board
+    for (let i = 0; i < piece.length; i += 1) {
+      for (let j = 0; j < piece[i].length; j += 1) {
+        const [h, w] = oldPos;
+        newBoard[i + h][j + w] = null;
+      }
+    };
+  }
+
+  // Draw at new position on the board
+  for (let i = 0; i < piece.length; i += 1) {
+    for (let j = 0; j < piece[i].length; j += 1) {
+      const [h, w] = newPos;
+      newBoard[i + h][j + w] = piece[i][j];
+    }
+  };
+
+  return newBoard;
+};

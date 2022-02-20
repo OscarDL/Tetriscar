@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 
-import { getRandomPiece } from '../../utils';
 import { useGameContext } from '../../Context/Game/Provider';
 import { useSettingsContext } from '../../Context/Settings/Provider';
+import { getNewPiecePos, placePiece, savePiece, updateBoard, updatePosition } from '../../utils';
 
 
-const setBoardsize = () => {
+const setBoardSize = () => {
   let board;
 
   while (!board) {
@@ -15,65 +15,69 @@ const setBoardsize = () => {
   board.style.width = board.clientHeight / 2 + 'px';
 };
 
+const startGame = (board, currentPiece, dispatch) => {
+  const initialPos = getNewPiecePos(currentPiece);
+
+  dispatch({ type: 'SET_PLAY', play: true });
+  dispatch({ type: 'SET_POSITION', position: initialPos });
+  dispatch({ type: 'SET_BOARD', board: updateBoard(board, currentPiece, initialPos) });
+};
+
 
 export default function Board() {
   const [{commands}] = useSettingsContext();
-  const [{play, board, currentPiece, nextPiece, sidePiece}, gameDispatch] = useGameContext();
-
-
-  const savePiece = useCallback(() => {
-    const piece = sidePiece;
-    gameDispatch({ type: 'SET_SIDE_PIECE', sidePiece: currentPiece });
-
-    if (piece) {
-      gameDispatch({ type: 'SET_CURRENT_PIECE', currentPiece: piece });
-    } else {
-      gameDispatch({ type: 'SET_CURRENT_PIECE', currentPiece: nextPiece });
-      gameDispatch({ type: 'SET_NEXT_PIECE', nextPiece: getRandomPiece() });
-    }
-
-    console.log('piece saved');
-  }, [currentPiece, nextPiece, sidePiece, gameDispatch]);
-
-  const placePiece = useCallback(() => {
-    gameDispatch({ type: 'SET_CURRENT_PIECE', currentPiece: nextPiece });
-    gameDispatch({ type: 'SET_NEXT_PIECE', nextPiece: getRandomPiece() });
-
-    console.log('piece placed');
-  }, [nextPiece, gameDispatch]);
-
-  const rotatePiece = useCallback(() => {
-    console.log('piece rotated');
-  }, []);
+  const [{board, currentPiece, nextPiece, play, position, savedPiece}, gameDispatch] = useGameContext();
 
 
   useEffect(() => {
-    setBoardsize();
-    window.addEventListener('resize', setBoardsize);
+    setBoardSize();
+    window.addEventListener('resize', setBoardSize);
 
-    return () => window.removeEventListener('resize', setBoardsize);
-  }, []);
+    return () => window.removeEventListener('resize', setBoardSize);
+  }, [play]);
 
   useEffect(() => {
-    if (!play) {
-      document.body.onkeyup = (e) => {
+    const handleEvents = (e) => {
+      if (play) {
         // Renew current piece on pressing "Space"
         if (e.code === commands.place.code) {
-          placePiece();
+          const h = 0;
+          const w = 0;
+          placePiece(board, currentPiece, nextPiece, [h, w], gameDispatch);
         }
-        
         // Save current piece on pressing "Enter"
         if (e.code.includes(commands.save.code)) {
-          savePiece()
+          console.log()
+          savePiece(currentPiece, nextPiece, savedPiece, gameDispatch);
         }
-        
         // Rotate current piece on pressing "R"
         if (e.code === commands.rotate.code) {
-          rotatePiece()
+          // TODO: Rotate piece
+          console.log('Rotate piece');
+        }
+
+        if (e.code === commands.left.code) {
+          updatePosition('left', board, currentPiece, nextPiece, position, gameDispatch);
+        }
+        if (e.code === commands.right.code) {
+          updatePosition('right', board, currentPiece, nextPiece, position, gameDispatch);
+        }
+        if (e.code === commands.down.code) {
+          updatePosition('down', board, currentPiece, nextPiece, position, gameDispatch);
+        } 
+      }
+
+      else {
+        if (e.code.includes(commands.save.code)) {
+          startGame(board, currentPiece, gameDispatch);
         }
       }
-    }
-  }, [play, commands, placePiece, rotatePiece, savePiece]);
+    };
+
+    window.addEventListener('keydown', handleEvents);
+
+    return () => window.removeEventListener('keydown', handleEvents);
+  }, [board, commands, currentPiece, nextPiece, play, position, savedPiece, gameDispatch]);
 
 
   return (
@@ -85,6 +89,14 @@ export default function Board() {
           ))}
         </div>
       ))}
+
+      {play ? null : (
+        <div className="play-overlay">
+          <div className="play-text">
+            PRESS <span style={{color: 'gold'}}>ENTER</span> TO<br/>START THE GAME
+          </div>
+        </div>
+      )}
     </div>
   );
 }

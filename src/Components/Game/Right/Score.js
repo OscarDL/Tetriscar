@@ -1,14 +1,15 @@
 import React from 'react';
 
 import SideContainer from '../../Shared/SideContainer';
+import { useGameContext } from '../../../Context/Game/Provider';
 
 
 export default function Score() {
+  const [{score}] = useGameContext();
+
   return (
-    <SideContainer title="Score">
-      <div className="score">
-        1900
-      </div>
+    <SideContainer divClass="score" title="Score">
+      {score}
     </SideContainer>
   );
 }

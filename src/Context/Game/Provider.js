@@ -6,9 +6,16 @@ import { createNewBoard, getRandomPiece } from '../../utils';
 const gameState = {
   play: false,
   board: createNewBoard(),
-  
+
+  score: 0,
+  combo: {
+    best: 0,
+    current: 0
+  },
+
   rotation: 0,
-  sidePiece: null,
+  position: [0, 0],
+  savedPiece: null,
   nextPiece: getRandomPiece(),
   currentPiece: getRandomPiece()
 };

@@ -34,6 +34,8 @@ body {
 
 .app {
   display: flex;
+  justify-content: space-between;
+
   padding: 1rem;
   margin: 0 auto;
 
@@ -45,6 +47,9 @@ body {
 
 .left, .right {
   flex: 1;
+  min-width: 20%;
+  max-width: 30%;
+
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -107,9 +112,10 @@ body {
 
   height: 100%;
   overflow: hidden;
+  position: relative;
 
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
 }
 
 .board .line .block {
@@ -123,17 +129,63 @@ body {
   padding-bottom: 100%;
 }
 
+.board .play-overlay {
+  inset: 0;
+  position: absolute;
+
+  display: grid;
+  place-items: center;
+
+  background-color: #0005;
+}
+.board .play-text {
+  color: white;
+  user-select: none;
+  text-align: center;
+
+  padding: 1rem;
+  font-size: 2rem;
+}
+
 
 /* Side panels */
 
-.saved-piece, .next-piece {
+.saved-piece .side-container__content,
+.next-piece .side-container__content {
   display: flex;
-  padding: 1rem 0;
+  align-items: center;
   justify-content: center;
+
+  padding: 1rem 0;
+  min-height: calc(5rem + 1px); /* 2rem padding + 2*1.5rem block lines height + 1px gap */
 }
 
-.score {
+.score .side-container__content {
   color: gold;
   font-size: 2rem;
   font-weight: 600;
+}
+
+
+/* Mobile friendly version --- WIP */
+
+@media (max-width: 1024px) {
+  .app {
+    flex-direction: column;
+  }
+
+  .left, .right {
+    max-width: unset;
+    width: fit-content;
+    flex-direction: row;
+  }
+
+  .side-container__content {
+    overflow: auto;
+    height: min-content;
+  }
+
+  .commands {
+    display: none;
+  }
 }
