@@ -10,7 +10,7 @@ const setBoardSize = () => {
 
   while (!board) {
     board = document.getElementById('board');
-  }
+  };
 
   board.style.width = board.clientHeight / 2 + 'px';
 };

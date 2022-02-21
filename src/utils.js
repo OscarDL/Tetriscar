@@ -133,8 +133,7 @@ export const updatePosition = (type, board, currentPiece, nextPiece, position, d
 
       const canMoveLeft = currentPiece.every((line, i) => {
         const firstBlock = line.findIndex(block => block !== null);
-        console.log(board, board[i], board[i][w + firstBlock - 1], i, firstBlock);
-        return board[h][w + firstBlock - 1] === null;
+        return board[h + i][w + firstBlock - 1] === null;
       });
 
       if (canMoveLeft) {
@@ -152,7 +151,7 @@ export const updatePosition = (type, board, currentPiece, nextPiece, position, d
       const canMoveRight = currentPiece.every((line, i) => {
         // ".slice()" duplicates the line array to avoid mutating it with ".reverse()"
         const lastBlock = line.slice().reverse().findIndex(block => block !== null);
-        return board[h][w + currentPiece[i].length - lastBlock] === null;
+        return board[h + i][w + currentPiece[i].length - lastBlock] === null;
       });
 
       if (canMoveRight) {
@@ -170,7 +169,7 @@ export const updatePosition = (type, board, currentPiece, nextPiece, position, d
       const lastPieceLine = currentPiece[currentPiece.length - 1];
 
       const sliceUnderPiece = board[hPos + 1]?.slice(w, w + lastPieceLine.length);
-      const canMoveDown = sliceUnderPiece?.every(block => block === null) ?? false;
+      const canMoveDown = sliceUnderPiece?.every((block, i) => !block || !lastPieceLine[i]) ?? false;
 
       if (canMoveDown) {
         const newPosition = [h + 1, w];
@@ -197,7 +196,10 @@ export const updateBoard = (board, piece, newPos, oldPos) => {
     for (let i = 0; i < piece.length; i += 1) {
       for (let j = 0; j < piece[i].length; j += 1) {
         const [h, w] = oldPos;
-        newBoard[i + h][j + w] = null;
+
+        if (newBoard[i + h][j + w] === piece[i][j]) {
+          newBoard[i + h][j + w] = null;
+        }
       }
     };
   }
@@ -206,7 +208,10 @@ export const updateBoard = (board, piece, newPos, oldPos) => {
   for (let i = 0; i < piece.length; i += 1) {
     for (let j = 0; j < piece[i].length; j += 1) {
       const [h, w] = newPos;
-      newBoard[i + h][j + w] = piece[i][j];
+
+      if (piece[i][j]) {
+        newBoard[i + h][j + w] = piece[i][j];
+      }
     }
   };
 
