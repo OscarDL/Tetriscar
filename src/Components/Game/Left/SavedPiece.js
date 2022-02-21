@@ -5,12 +5,12 @@ import SideContainer from '../../Shared/SideContainer';
 import { useGameContext } from '../../../Context/Game/Provider';
 
 
-export default function NextPiece() {
-  const [{play, nextPiece}] = useGameContext();
+export default function SavedPiece() {
+  const [{play, savedPiece}] = useGameContext();
 
   return (
-    <SideContainer divClass="next-piece" title="Next piece">
-      {play && drawPiece(nextPiece)}
+    <SideContainer divClass="saved-piece" title="Saved piece">
+      {play && (drawPiece(savedPiece) ?? 'No piece saved.')}
     </SideContainer>
   );
 }

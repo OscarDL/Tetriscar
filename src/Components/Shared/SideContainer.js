@@ -1,9 +1,12 @@
 import React from 'react';
 
 
-export default function SideContainer({title, children}) {
+export default function SideContainer({divClass, title, children}) {
   return (
-    <div className="side-container" style={title ? {} : {marginTop: '1rem'}}>
+    <div
+      className={'side-container ' + divClass}
+      style={title ? {} : {marginTop: '1rem'}}
+    >
       {title && (
         <h2 className="side-container__title">{title}</h2>
       )}

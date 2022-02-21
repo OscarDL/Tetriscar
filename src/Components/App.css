@@ -34,34 +34,25 @@ body {
 
 .app {
   display: flex;
+  justify-content: space-between;
+
+  padding: 1rem;
   margin: 0 auto;
-  padding: 10px 0;
 
   gap: 1rem;
-  width: 60%;
+  width: 50%;
   height: 100%;
-  min-width: 30rem;
+  min-width: 50rem;
 }
 
 .left, .right {
+  flex: 1;
+  min-width: 20%;
+  max-width: 30%;
+
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-}
-
-
-.board {
-  flex-grow: 1;
-  background-color: #fff2;
-}
-
-
-.left {
-  width: 25%;
-}
-
-.right {
-  width: 25%;
 }
 
 
@@ -97,11 +88,11 @@ body {
 }
 
 .side-container__title {
-  padding: 0 0.5rem;
+  padding: 0.25rem 0.75rem;
 
   color: #fffd;
   font-weight: 500;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   text-transform: uppercase;
 
   background-color: #fff2; /* Make background slightly brighter */
@@ -109,18 +100,92 @@ body {
 
 .side-container__content {
   color: #fffd;
-  padding: 0.5rem;
+  padding: 0.75rem;
 }
 
 
-.side-piece {
-  padding: 1rem;
+/* Main Tetris Board */
+
+.board {
+  gap: 1px;
+  background-color: #fff2;
+
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+}
+
+.board .line .block {
+  height: 100%;
+  width: calc(10% - (9px / 10)); /* 9 gaps of 1px / 10 blocks */ 
+}
+.board .line .block::before {
+  content: '';
+  display: block;
+  overflow: hidden;
+  padding-bottom: 100%;
+}
+
+.board .play-overlay {
+  inset: 0;
+  position: absolute;
+
+  display: grid;
+  place-items: center;
+
+  background-color: #0005;
+}
+.board .play-text {
+  color: white;
+  user-select: none;
+  text-align: center;
+
+  padding: 1rem;
+  font-size: 2rem;
 }
 
 
-.score {
+/* Side panels */
+
+.saved-piece .side-container__content,
+.next-piece .side-container__content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 1rem 0;
+  min-height: calc(5rem + 1px); /* 2rem padding + 2*1.5rem block lines height + 1px gap */
+}
+
+.score .side-container__content {
+  color: gold;
   font-size: 2rem;
   font-weight: 600;
+}
+
+
+/* Mobile friendly version --- WIP */
+
+@media (max-width: 1024px) {
+  .app {
+    flex-direction: column;
+  }
+
+  .left, .right {
+    max-width: unset;
+    width: fit-content;
+    flex-direction: row;
+  }
+
+  .side-container__content {
+    overflow: auto;
+    height: min-content;
+  }
+
+  .commands {
+    display: none;
+  }
 }
